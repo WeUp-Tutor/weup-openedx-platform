@@ -17,6 +17,11 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
 from openedx.core.djangoapps.user_authn.api.helper import RegistrationFieldsContext
 from openedx.core.djangoapps.user_authn.serializers import MFEContextSerializer
 from openedx.core.djangoapps.user_authn.views.utils import get_mfe_context
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class MFEContextThrottle(AnonRateThrottle):
@@ -66,6 +71,12 @@ class MFEContextView(APIView):
                 is_register_page (bool): Determine the call is from register or login page
                 is_welcome_page (bool): Checks if the call is from the Welcome Page
         """
+
+        log.info("******************************$")
+        log.info("MFEContextView called with query params: %s", request.GET)
+
+        FORM_EXTRA_FIELDS = configuration_helpers.get_value('FORM_EXTRA', [])
+
         request_params = request.GET
         redirect_to = get_next_url_for_login_page(request)
         third_party_auth_hint = request_params.get('tpa_hint')
@@ -81,8 +92,9 @@ class MFEContextView(APIView):
             },
         }
 
-        if settings.ENABLE_DYNAMIC_REGISTRATION_FIELDS:
+        if settings.ENABLE_DYNAMIC_REGISTRATION_FIELDS or FORM_EXTRA_FIELDS:
             if request_params.get('is_welcome_page'):
+                log.info("Getting optional fields for welcome page")
                 optional_fields = self._get_optional_fields_context()
                 context = {
                     'context_data': {
@@ -90,6 +102,7 @@ class MFEContextView(APIView):
                     },
                     'optional_fields': optional_fields,
                 }
+                log.info(context)
                 return Response(
                     status=status.HTTP_200_OK,
                     data=MFEContextSerializer(
@@ -98,7 +111,11 @@ class MFEContextView(APIView):
                 )
 
             if request_params.get('is_register_page'):
+
+                log.info("Getting registration fields for registration page")
                 registration_fields = RegistrationFieldsContext().get_fields()
+                log.info("Registration fields: %s", registration_fields)
+
                 context['registration_fields'].update({
                     'fields': registration_fields,
                 })
