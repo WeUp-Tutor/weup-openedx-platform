@@ -717,6 +717,8 @@ class RegistrationView(APIView):
 
 # WUL - Custom field params on registration
         if user:
+            # cohort_enrollment_enabled_field = configuration_helpers.get_value('ENABLE_COHORT_ENROLLMENT', None)
+
             FORM_EXTRA = configuration_helpers.get_value('FORM_EXTRA', getattr(settings, 'FORM_EXTRA', {}))
             if len(FORM_EXTRA):
                 form_extra_fields = []
@@ -726,18 +728,18 @@ class RegistrationView(APIView):
                             form_extra_fields.append(value)
 
                     # WUL enroll user in a selected cohort
-                    if cohort_enrollment_enabled_field is not None:
-                        if field["name"] == cohort_enrollment_enabled_field:
-                            try:
-                                course_id = data["course_id"]
-                                cohort_name = data[cohort_enrollment_enabled_field]
-                                course_key = SlashSeparatedCourseKey.from_string(str(course_id))
-                                cohort = get_cohort_by_name(course_key, cohort_name )
-                                add_user_to_cohort(cohort, user)
-                                log.info("WUL - user {user} has been successfully enrolled into this following cohort {cohort} ".format(user=user, cohort=cohort_name))
-                            except:
-                                log.info("WUL ERROR - an error occurred during this user's registration into a cohort ")
-                                pass
+                    # if cohort_enrollment_enabled_field :
+                    #     if field["name"] == cohort_enrollment_enabled_field:
+                    #         try:
+                    #             course_id = data["course_id"]
+                    #             cohort_name = data[cohort_enrollment_enabled_field]
+                    #             course_key = SlashSeparatedCourseKey.from_string(str(course_id))
+                    #             cohort = get_cohort_by_name(course_key, cohort_name )
+                    #             add_user_to_cohort(cohort, user)
+                    #             log.info("WUL - user {user} has been successfully enrolled into this following cohort {cohort} ".format(user=user, cohort=cohort_name))
+                    #         except:
+                    #             log.info("WUL ERROR - an error occurred during this user's registration into a cohort ")
+                    #             pass
 
                 self._update_custom_field_on_account_creation(user, form_extra_fields, data.dict())
 # WUL - Custom field params on registration
