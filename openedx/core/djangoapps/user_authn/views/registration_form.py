@@ -495,12 +495,12 @@ class RegistrationFormFactory:
                     default=field.get('defaultValue', u''),
                     field_type=field.get('type', u'text'),
                     placeholder=field.get('placeholder', u''),
-                    instructions=field.help_text,
+                    instructions=field.get('help_text', u''),
                     exposed= field.get('exposed', "optional"),
                     required=field.get('required', True),
                     restrictions=field.get('restrictions', None),
                     options=field.get('options', None),
-                    include_default_option=field_options.get('include_default_option'),
+                    include_default_option=field.get('include_default_option', None),
                 )
 # WUL - ADD CUSTOM FIELDS TO FORM
 
