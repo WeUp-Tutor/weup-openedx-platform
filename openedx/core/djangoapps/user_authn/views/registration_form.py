@@ -506,6 +506,7 @@ class RegistrationFormFactory:
                     required=field.get('required', True),
                     restrictions=field.get('restrictions',  {}),
                     options=field.get('options', None),
+                    error_messages=field.get('error_messages', u''),
                     include_default_option=field.get('include_default_option', None),
                 )
 # WUL - ADD CUSTOM FIELDS TO FORM

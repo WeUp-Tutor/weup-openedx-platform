@@ -11,6 +11,9 @@ from openedx.core.djangoapps.user_authn.api import form_fields
 from openedx.core.djangoapps.user_authn.views.registration_form import get_registration_extension_form
 from common.djangoapps.student.models import UserProfile
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class RegistrationFieldsContext(APIView):
     """
@@ -93,16 +96,21 @@ class RegistrationFieldsContext(APIView):
         only stores those fields which are available in extended_profile configuration, so we only
         want to send those fields which can be saved.
         """
-        return (field in self.user_profile_fields or field in ["terms_of_service", "honor_code"] or
-                field in configuration_helpers.get_value('extended_profile_fields', []))
+        return (
+            field in self.user_profile_fields
+            or field in ["terms_of_service", "honor_code"]
+            or field in configuration_helpers.get_value('extended_profile_fields', [])
+        )
 
     def get_fields(self):
         """
-        Returns the required or optional fields configured in REGISTRATION_EXTRA_FIELDS settings.
+        Returns the required or optional fields configured in REGISTRATION_EXTRA_FIELDS settings,
+        complétés par les champs définis dans la configuration FORM_EXTRA.
         """
-        # Custom form fields can be added via the form set in settings.REGISTRATION_EXTENSION_FORM
+        # Champs standards / custom_form
         custom_form = get_registration_extension_form() or {}
         response = {}
+
         for field in self.valid_fields:
             if field == 'confirm_email' and self.field_type == 'optional' or not self._field_can_be_saved(field):
                 continue
@@ -114,5 +122,50 @@ class RegistrationFieldsContext(APIView):
                 field_handler = getattr(form_fields, f'add_{field}_field', None)
                 if field_handler:
                     response[field] = field_handler(self.field_type == 'required')
+
+        # WUL - ADD CUSTOM FIELDS TO FORM (pour Authn MFE)
+        form_extra_fields = configuration_helpers.get_value('FORM_EXTRA', [])
+        log.info("FORM_EXTRA_FIELDS (RegistrationFieldsContext)")
+        log.info(form_extra_fields)
+
+        if form_extra_fields:
+            for field in form_extra_fields:
+                # Optionnel : filtrer par type de formulaire ou par required/optional
+                # Par exemple, si tu stockes "form": "register" dans ta config :
+                form_name = field.get('form')
+                if form_name and form_name != 'register':
+                    continue
+
+                # Filtrer sur required/optional si tu veux les répartir entre registration_fields et optional_fields
+                # Ici, on suppose que field['required'] indique si ça va dans 'required' ou 'optional'
+                field_required = field.get('required', True)
+                if self.field_type == 'required' and not field_required:
+                    continue
+                if self.field_type == 'optional' and field_required:
+                    continue
+
+                name = field.get('name', u'')
+                if not name:
+                    continue
+
+                # On s'assure aussi qu'on ne remplace pas un champ déjà défini
+                if name in response:
+                    continue
+
+                response[name] = {
+                    'name': name,
+                    'label': field.get('label', u''),
+                    'defaultValue': field.get('defaultValue', u''),
+                    'type': field.get('type', u'text'),
+                    'placeholder': field.get('placeholder', u''),
+                    'help_text': field.get('help_text', u''),
+                    'required': field_required,
+                    'restrictions': field.get('restrictions', {}),
+                    'options': field.get('options', None),
+                    'error_messages': field.get('error_messages', u''),
+                    'include_default_option': field.get('include_default_option', None),
+                    'instructions': field.get('instructions', u''),
+                    'exposed': field.get('exposed', u'optional')
+                }
 
         return response
