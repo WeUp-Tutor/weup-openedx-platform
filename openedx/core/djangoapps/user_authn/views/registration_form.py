@@ -35,6 +35,8 @@ from openedx.core.djangoapps.user_authn.views.utils import remove_disabled_count
 from openedx.core.djangolib.markup import HTML, Text
 from openedx.features.enterprise_support.api import enterprise_customer_for_request
 
+import logging
+log = logging.getLogger(__name__)
 
 class TrueCheckbox(widgets.CheckboxInput):
     """
@@ -486,6 +488,10 @@ class RegistrationFormFactory:
 
 # WUL - ADD CUSTOM FIELDS TO FORM
         FORM_EXTRA_FIELDS = configuration_helpers.get_value('FORM_EXTRA', [])
+
+        log.info("FORM_EXTRA_FIELDS")
+        log.info(FORM_EXTRA_FIELDS)
+
         if(len(FORM_EXTRA_FIELDS)):
             for field in FORM_EXTRA_FIELDS:
 
@@ -498,7 +504,7 @@ class RegistrationFormFactory:
                     instructions=field.get('help_text', u''),
                     exposed= field.get('exposed', "optional"),
                     required=field.get('required', True),
-                    restrictions=field.get('restrictions', None),
+                    restrictions=field.get('restrictions',  {}),
                     options=field.get('options', None),
                     include_default_option=field.get('include_default_option', None),
                 )
