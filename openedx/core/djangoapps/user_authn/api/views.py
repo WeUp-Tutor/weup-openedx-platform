@@ -120,10 +120,7 @@ class MFEContextView(APIView):
                     'fields': registration_fields,
                 })
 
-                
-                context['registrationFields'].update({
-                    'fields': registration_fields,
-                })
+
                 log.info(context)
                 log.info(MFEContextSerializer(context))
                 log.info(MFEContextSerializer(context).data)
