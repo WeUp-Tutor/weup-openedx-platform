@@ -120,6 +120,14 @@ class MFEContextView(APIView):
                     'fields': registration_fields,
                 })
 
+                
+                context['registrationFields'].update({
+                    'fields': registration_fields,
+                })
+                log.info(context)
+                log.info(MFEContextSerializer(context))
+                log.info(MFEContextSerializer(context).data)
+
                 optional_fields = self._get_optional_fields_context()
                 if optional_fields:
                     context['optional_fields'].update(optional_fields)
