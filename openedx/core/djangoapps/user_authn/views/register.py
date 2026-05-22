@@ -751,11 +751,21 @@ class RegistrationView(APIView):
 
 # WUL - Custom field params on registration
     def _update_custom_field_on_account_creation(self, user, form_extra_fields, data):
-        custom_fields = json.loads(user.profile.custom_field)
+
+        # Récupère ou init meta
+        profile_meta = getattr(user.profile, 'meta', '{}')
+        try:
+            meta = json.loads(profile_meta) if profile_meta else {}
+        except json.JSONDecodeError:
+            meta = {}
+        custom_fields = meta.get('custom_field', {})
+
         for field in form_extra_fields:
             if field in data.keys():
                 custom_fields[field] = data[field]
-        user.profile.meta = json.dumps(custom_fields)
+
+        meta['custom_field'] = custom_fields
+        user.profile.meta = json.dumps(meta)
         user.profile.save()
 # WUL - Custom field params on registration
 
