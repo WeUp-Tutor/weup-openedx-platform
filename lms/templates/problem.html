@@ -9,7 +9,7 @@ from openedx.core.djangolib.markup import HTML, Text
   ${ problem['name'] }
 </h3>
 
-<div class="problem-progress" id="${ id }-problem-progress"></div>
+<div style="display: none;"  class="problem-progress" id="${ id }-problem-progress"></div>
 
 <div class="problem">
   ${ HTML(problem['html']) }
