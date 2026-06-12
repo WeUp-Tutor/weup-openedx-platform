@@ -13,3 +13,4 @@ Cordialement,
 L'équipe Hexafret
 
 Cet e-mail a été envoyé automatiquement à la suite d'une demande de création de compte sur la plateforme Hexafret. Merci de ne pas y répondre.
+{% endautoescape %}
