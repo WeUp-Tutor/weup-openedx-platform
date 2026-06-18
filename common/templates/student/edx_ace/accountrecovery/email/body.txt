@@ -1,11 +1,10 @@
 {% load i18n %}{% autoescape off %}
-{% blocktrans %}You're receiving this e-mail because you requested to create a password for your user account at {{ platform_name }}.{% endblocktrans %}
+Bonjour,
+Vous recevez cet email parce que vous avez demandé une réinitialisation de votre mot de passe pour votre compte sur la plateforme MOOC SNCF
 
-{% blocktrans %}We've restored access to your {{ platform_name }} account using the recovery email you provided at registration.{% endblocktrans %}
 
-{% blocktrans %}Once you've created a password [below], you will be able to log in to {{ platform_name }} with this email ({{ email }}) and your new password.{% endblocktrans %}
+Si vous n'avez pas demandé ce changement, vous pouvez ignorer cet email - votre mot de passe reste inchangé. <br/>
 
-{% trans "If you didn't request this change, you can disregard this email - we have not yet reset your password." %}
 
 {{ reset_link }}
 
