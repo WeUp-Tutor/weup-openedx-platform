@@ -8,6 +8,6 @@ Si vous n'avez pas demandé ce changement, vous pouvez ignorer cet email - votre
 
 {{ reset_link }}
 
-{% trans "Thanks for using our site!" %}
-{% blocktrans %}The {{ platform_name }} Team{% endblocktrans %}
+L'équipe SNCF.
+
 {% endautoescape %}
