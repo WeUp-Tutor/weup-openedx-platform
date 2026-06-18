@@ -23,9 +23,9 @@
                 {% trans "Account activation" as header_msg %}{{ header_msg | force_escape }}
             </h1>
             <p style="color: rgba(0,0,0,.75);">
-                {% filter force_escape %}
-                    {% blocktrans %}You're almost there! Use the link below to activate your account to access engaging, high-quality {{ platform_name }} courses. Note that you will not be able to log back into your account until you have activated it.{% endblocktrans %}
-                {% endfilter %}
+Bonjour,<br/>
+Votre compte MOOC SNCF a bien été créé.<br/>
+Pour finaliser votre inscription et accéder à la plateforme, veuillez cliquer sur le bouton ci-dessous :
                 <br />
             </p>
 
@@ -38,20 +38,20 @@
     <tr>
         <td>
             <p style="color: rgba(0,0,0,.75);">
-                {% filter force_escape %}
-                    {% blocktrans %}Enjoy learning with {{ platform_name }}.{% endblocktrans %}
-                {% endfilter %}
+                
+Veuillez noter que vous ne pourrez pas vous connecter tant que votre compte n'aura pas été activé. <br />
+Si vous n'êtes pas à l'origine de cette inscription, vous pouvez simplement ignorer cet e-mail. <br />
+                
                 <br />
             </p>
         </td>
     </tr>
         <td>
             <p style="color: rgba(0,0,0,.75);">
-                {% blocktrans trimmed asvar assist_msg %}
-                If you need help, please use our web form at {start_anchor_web}{{ support_url }}{end_anchor} or email {start_anchor_email}{{ support_email }}{end_anchor}.
-                {% endblocktrans %}
-                {% interpolate_html assist_msg start_anchor_web='<a href="'|add:support_url|add:'">'|safe start_anchor_email='<a href="mailto:'|add:support_email|add:'">'|safe end_anchor='</a>'|safe %}
-                <br />
+Pour toute question ou demande d'assistance, contactez-nous à l'adresse suivante : <a href="mailto:technical@weuplearning.com">technical@weuplearning.com.</a>. <br />
+Cordialement,<br />
+L'équipe MOOC SNCF<br />
+
             </p>
         </td>
     <tr>
@@ -60,9 +60,7 @@
     <tr>
         <td>
             <p style="color: rgba(0,0,0,.75);">
-                {% filter force_escape %}
-                    {% blocktrans %}This email message was automatically sent by {{ lms_url }} because someone attempted to create an account on {{ platform_name }} using this email address.{% endblocktrans %}
-                {% endfilter %}
+Cet e-mail a été envoyé automatiquement à la suite d'une demande de création de compte sur la plateforme MOOC SNCF. Merci de ne pas y répondre.
                 <br />
             </p>
         </td>
