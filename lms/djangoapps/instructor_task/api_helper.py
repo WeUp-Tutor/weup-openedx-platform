@@ -459,8 +459,20 @@ def submit_task(request, task_type, task_class, course_key, task_input, task_key
 
     # make sure all data has been committed before handing off task to celery.
 
+    
     task_id = instructor_task.task_id
     task_args = [instructor_task.id, _get_xblock_instance_args(request, task_id)]
+
+    log.info("DEBUG WUL: task_class=%s, type=%s", task_class, type(task_class))
+    if hasattr(task_class, "_get_base_task"):
+        base_task = task_class._get_base_task()
+        log.info("DEBUG WUL: base_task=%s, type=%s", base_task, type(base_task))
+    else:
+        log.info("DEBUG WUL: task_class has no _get_base_task")
+
+
+
+    
     try:
         task_class.apply_async(task_args, task_id=task_id)
 
