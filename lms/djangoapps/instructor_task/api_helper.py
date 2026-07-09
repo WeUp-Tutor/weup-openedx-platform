@@ -474,11 +474,16 @@ def submit_task(request, task_type, task_class, course_key, task_input, task_key
 
     
     try:
-        task_class.apply_async(task_args, task_id=task_id)
+        # Si la classe a _get_base_task, utiliser la tâche sous-jacente
+        if hasattr(task_class, "_get_base_task"):
+            base_task = task_class._get_base_task()
+            base_task.apply_async(task_args, task_id=task_id)  
+        else:
+            task_class.apply_async(task_args, task_id=task_id)
 
-    except Exception as error:  # lint-amnesty, pylint: disable=broad-except
+    except Exception as error:  # noqa
         _handle_instructor_task_failure(instructor_task, error)
-
+    
     return instructor_task
 
 
